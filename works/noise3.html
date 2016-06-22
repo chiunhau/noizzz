@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="../css/main.css">
+	<script src="libraries/p5.js"></script>
+	<script src="libraries/p5.dom.js"></script>
+</head>
+<body>
+
+	<div class="container">
+		<div class="nav">
+			<h1 class="brand"><a href="../index.html">NOIZZZ.</a></h1>
+			<hr>
+			<p>just another garden of mine</p>
+			<ul>
+				<li>- <a href="../me.html">my rumor<a/></li>
+				<li>- <a href="../why.html">why p5js<a/></li>
+			</ul>
+			<hr style="margin-top:30px;">
+			<p>and all my p5 digital art works live in here :)</p>
+			<ul>
+				<li>- <a href="noise1.html">noise1</a></li>
+				<li>- <a href="noise2.html">noise2</a></li>
+				<li>- <a href="noise3.html">noise3</a></li>
+				<li>- <a href="flock1.html">flock1</a></li>
+			</ul>
+		</div>
+		<div class="content work" id="work">
+			<h1>noise3</h1>
+			<p>#PerlinNoise #silk</p>
+		</div>
+	</div>
+	<div id="left"></div>
+	<div id="right"></div>
+	<div id="top"></div>
+	<div id="bottom"></div>
+	<script>
+		var flowfield;
+		var from, to;
+		function setup() {
+		  var mycnv = createCanvas(800, 600).parent('work');
+		  colorMode(RGB);
+		  background(255);
+		  flowfield = new FlowField(6);
+		  flowfield.display();
+
+		}
+		function FlowField(r) {
+		  this.resolution = r;
+		  this.cols = width / this.resolution;
+		  this.rows = height / this.resolution;
+		  this.make2Darray = function(n) {
+		    var array = [];
+		    for (var i = 0; i < n; i++) {
+		      array[i] = [];
+		    }
+		    return array;
+		  };
+		  this.field = this.make2Darray(this.cols);
+		  this.fieldNoise = this.make2Darray(this.cols);
+		  this.init = function() {
+		    noiseSeed(Math.floor(random(10000)));
+		    var xoff = 0;
+		    for (var i = 0; i < this.cols; i++) {
+		      var yoff = 0;
+		      for (var j = 0; j < this.rows; j++) {
+		        var theta = map(noise(xoff, yoff), 0, 1, 0, TWO_PI);
+		        this.fieldNoise[i][j] = noise(yoff, xoff);
+		        this.field[i][j] = createVector(cos(theta), sin(theta));
+		        yoff += 0.01;
+		      }
+		      xoff += 0.01;
+		    }
+		  }
+		  this.init();
+		  this.display = function() {
+		    from = color(121, 0, 250);
+		    to = color(255, 0, 221);
+		    var xoff = 0, yoff = 0;
+		    for (var i = 0; i < this.cols; i++) {
+		      for (var j = 0; j < this.rows; j++) {
+		        strokeWeight(this.fieldNoise[i][j] * 3);
+		        stroke(lerpColor(from, to, map(this.fieldNoise[i][j], 0, 1, -1, 2)));
+		        drawVector(this.field[i][j], i * this.resolution, j * this.resolution, this.resolution + 5);
+		        yoff += 0.02;
+		      }
+		      xoff += 0.02;
+		    }
+		  }
+		  var drawVector = function(v, x, y, scayl) {
+		    push();
+		    translate(x, y);
+		    rotate(v.heading());
+		    var len = v.mag() * scayl;
+		    line(-len, 0, len, 0);
+		    pop();
+		  };
+		}
+
+
+
+
+	</script>
+</body>
+</html>
